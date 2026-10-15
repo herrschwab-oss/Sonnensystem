@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive Übung: Die Sonne & unser Sonnensystem</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            min-height: 100vh;
+        }
+
+        /* Subtle animated starry background effect */
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 230px 190px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 300px 300px;
+        }
+
+        .word-chip {
+            touch-action: none;
+            user-select: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .word-chip:hover {
+            transform: translateY(-2px);
+        }
+
+        .word-chip.selected {
+            ring: 3px solid #60A5FA;
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* Dropzones inside text */
+        .dropzone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 130px;
+            height: 38px;
+            padding: 2px 10px;
+            margin: 2px 4px;
+            border-bottom: 2px dashed #60A5FA;
+            background-color: rgba(30, 58, 138, 0.3);
+            border-radius: 8px;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+        }
+
+        .dropzone.drag-over {
+            background-color: rgba(96, 165, 250, 0.3);
+            border-color: #93C5FD;
+            transform: scale(1.03);
+        }
+
+        .dropzone.filled {
+            border-bottom: 2px solid #3B82F6;
+            background-color: rgba(30, 64, 175, 0.5);
+        }
+
+        .dropzone.correct {
+            border-color: #10B981 !important;
+            background-color: rgba(16, 185, 129, 0.2) !important;
+            color: #A7F3D0 !important;
+        }
+
+        .dropzone.incorrect {
+            border-color: #EF4444 !important;
+            background-color: rgba(239, 68, 68, 0.2) !important;
+            color: #FCA5A5 !important;
+        }
+
+        .text-line {
+            line-height: 2.3;
+        }
+    </style>
+</head>
+<body class="stars-bg text-slate-100 flex flex-col justify-between min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto w-full flex-grow flex flex-col justify-center">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="inline-flex items-center justify-center p-3 bg-blue-900/40 rounded-full mb-3 border border-blue-500/30">
+                <i class="fa-solid fa-sun text-yellow-400 text-3xl animate-pulse mr-2"></i>
+                <i class="fa-solid fa-user-astronaut text-blue-400 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-indigo-200 to-amber-200">
+                Die Sonne & unser Sonnensystem
+            </h1>
+            <p class="text-slate-400 mt-2 text-sm md:text-base">
+                Ziehe die passenden Begriffe aus dem Wortspeicher in die richtigen Lücken.
+            </p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-700/60 shadow-2xl p-6 md:p-10 mb-8">
+            
+            <!-- Text Content with Dropzones -->
+            <div class="text-lg md:text-xl text-slate-200 text-line font-medium mb-8">
+                Die Sonne ist ein 
+                <span class="dropzone" data-answer="Stern" data-slot="1"></span>, 
+                der von selbst 
+                <span class="dropzone" data-answer="leuchtet" data-slot="2"></span> 
+                und der sich im 
+                <span class="dropzone" data-answer="Zentrum" data-slot="3"></span> 
+                unseres 
+                <span class="dropzone" data-answer="Sonnensystem" data-slot="4"></span> 
+                befindet. Um sie bewegen sich auf kreisförmigen 
+                <span class="dropzone" data-answer="Bahnen" data-slot="5"></span> 
+                die 
+                <span class="dropzone" data-answer="Planeten" data-slot="6"></span>, 
+                die von der Sonne 
+                <span class="dropzone" data-answer="angestrahlt" data-slot="7"></span> 
+                werden.
+                <br><br>
+                Manche Planeten werden selbst von Himmelskörpern umkreist. Bei der Erde ist dies der 
+                <span class="dropzone" data-answer="Mond" data-slot="8"></span>.
+            </div>
+
+            <!-- Wortspeicher / Bank -->
+            <div class="border-t border-slate-800 pt-6">
+                <h2 class="text-sm uppercase tracking-wider font-semibold text-slate-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-blue-400"></i> Wortspeicher
+                </h2>
+                
+                <div id="word-pool" class="flex flex-wrap gap-3 min-h-[70px] p-4 bg-slate-950/50 rounded-xl border border-slate-800/80 items-center">
+                    <!-- Dynamic draggable chips inserted via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback & Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+            <div id="feedback-msg" class="text-sm md:text-base font-medium text-slate-300 min-h-[24px] text-center sm:text-left">
+                Wähle ein Wort aus oder ziehe es in eine Lücke.
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <button id="reset-btn" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition border border-slate-700 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> Zurücksetzen
+                </button>
+                <button id="check-btn" class="flex-1 sm:flex-initial px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Überprüfen
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 mt-8">
+        Interaktive Lückentext-Aufgabe &bull; Astronomie & Physik
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Words list from screenshot + extra distractors if needed
+        const wordsData = [
+            "leuchtet", "Sonnensystem", "Zentrum", "Milchstraße", 
+            "Bahnen", "Galaxie", "Planeten", "angestrahlt", "Mond", "Stern"
+        ];
+
+        let selectedChip = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+        });
+
+        function initGame() {
+            const wordPool = document.getElementById('word-pool');
+            wordPool.innerHTML = '';
+
+            // Shuffle words slightly for variability
+            const shuffledWords = [...wordsData].sort(() => Math.random() - 0.5);
+
+            shuffledWords.forEach((word, index) => {
+                const chip = createWordChip(word, 'chip-' + index);
+                wordPool.appendChild(chip);
+            });
+
+            setupDropzones();
+            setupButtons();
+        }
+
+        function createWordChip(text, id) {
+            const chip = document.createElement('div');
+            chip.id = id;
+            chip.innerText = text;
+            chip.className = 'word-chip px-4 py-2 bg-gradient-to-r from-blue-900/80 to-slate-800 border border-blue-500/40 rounded-lg text-blue-100 font-medium cursor-grab active:cursor-grabbing shadow-md hover:border-blue-400 flex items-center gap-2 text-base';
+            chip.draggable = true;
+
+            // Drag Events
+            chip.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', chip.id);
+                chip.classList.add('opacity-50');
+                selectChip(chip);
+            });
+
+            chip.addEventListener('dragend', () => {
+                chip.classList.remove('opacity-50');
+            });
+
+            // Click / Touch Selection fallback for mobile ease
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (chip.parentElement.classList.contains('dropzone')) {
+                    // Return to pool if clicked inside dropzone
+                    returnChipToPool(chip);
+                } else {
+                    selectChip(chip);
+                }
+            });
+
+            return chip;
+        }
+
+        function selectChip(chip) {
+            // Deselect previous
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected'));
+            
+            if (selectedChip === chip) {
+                selectedChip = null;
+                updateFeedback("Auswahl aufgehoben.");
+            } else {
+                selectedChip = chip;
+                chip.classList.add('selected');
+                updateFeedback(`Word "${chip.innerText}" ausgewählt. Klicke auf eine Lücke zum Einfügen.`);
+            }
+        }
+
+        function setupDropzones() {
+            const dropzones = document.querySelectorAll('.dropzone');
+
+            dropzones.forEach(zone => {
+                // Drag Over
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                // Drop
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const chipId = e.dataTransfer.getData('text/plain');
+                    const chip = document.getElementById(chipId);
+                    if (chip) {
+                        placeChipInZone(chip, zone);
+                    }
+                });
+
+                // Click on Dropzone (mobile / click support)
+                zone.addEventListener('click', () => {
+                    if (selectedChip) {
+                        placeChipInZone(selectedChip, zone);
+                        deselectAllChips();
+                    } else if (zone.children.length > 0) {
+                        // Return existing item on click
+                        const existingChip = zone.children[0];
+                        returnChipToPool(existingChip);
+                    }
+                });
+            });
+
+            // Click outside to deselect
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.word-chip') && !e.target.closest('.dropzone')) {
+                    deselectAllChips();
+                }
+            });
+        }
+
+        function placeChipInZone(chip, zone) {
+            // Clear any status styling
+            resetZoneStatus(zone);
+
+            // If zone already has a chip, return it to the pool
+            if (zone.children.length > 0) {
+                returnChipToPool(zone.children[0]);
+            }
+
+            zone.appendChild(chip);
+            zone.classList.add('filled');
+            chip.classList.remove('selected');
+            selectedChip = null;
+
+            updateFeedback(`"${chip.innerText}" eingesetzt.`);
+        }
+
+        function returnChipToPool(chip) {
+            const pool = document.getElementById('word-pool');
+            const parentZone = chip.parentElement;
+            
+            if (parentZone && parentZone.classList.contains('dropzone')) {
+                parentZone.classList.remove('filled');
+                resetZoneStatus(parentZone);
+            }
+
+            pool.appendChild(chip);
+            chip.classList.remove('selected');
+            selectedChip = null;
+            updateFeedback(`"${chip.innerText}" zurück in den Wortspeicher gelegt.`);
+        }
+
+        function resetZoneStatus(zone) {
+            zone.classList.remove('correct', 'incorrect');
+        }
+
+        function deselectAllChips() {
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected'));
+            selectedChip = null;
+        }
+
+        function setupButtons() {
+            document.getElementById('check-btn').addEventListener('click', checkAnswers);
+            document.getElementById('reset-btn').addEventListener('click', resetAll);
+        }
+
+        function checkAnswers() {
+            const dropzones = document.querySelectorAll('.dropzone');
+            let correctCount = 0;
+            let total = dropzones.length;
+            let filledCount = 0;
+
+            dropzones.forEach(zone => {
+                const expected = zone.getAttribute('data-answer');
+                const currentChip = zone.children[0];
+
+                if (currentChip) {
+                    filledCount++;
+                    const actual = currentChip.innerText.trim();
+
+                    if (actual === expected) {
+                        zone.classList.add('correct');
+                        zone.classList.remove('incorrect');
+                        correctCount++;
+                    } else {
+                        zone.classList.add('incorrect');
+                        zone.classList.remove('correct');
+                    }
+                } else {
+                    zone.classList.remove('correct', 'incorrect');
+                }
+            });
+
+            if (filledCount < total) {
+                updateFeedback(`Bitte fülle alle Lücken aus (${filledCount}/${total} gefüllt).`, 'warning');
+            } else if (correctCount === total) {
+                updateFeedback(`🎉 Perfekt! Alle ${total} Lücken sind richtig gelöst!`, 'success');
+                triggerConfetti();
+            } else {
+                updateFeedback(`Du hast ${correctCount} von ${total} Lücken richtig. Überprüfe die rot markierten Felder.`, 'error');
+            }
+        }
+
+        function resetAll() {
+            const dropzones = document.querySelectorAll('.dropzone');
+            dropzones.forEach(zone => {
+                resetZoneStatus(zone);
+                zone.classList.remove('filled');
+            });
+
+            const chips = document.querySelectorAll('.word-chip');
+            const pool = document.getElementById('word-pool');
+            chips.forEach(chip => {
+                chip.classList.remove('selected');
+                pool.appendChild(chip);
+            });
+
+            selectedChip = null;
+            updateFeedback("Aufgabe zurückgesetzt.");
+        }
+
+        function updateFeedback(msg, type = 'info') {
+            const fb = document.getElementById('feedback-msg');
+            fb.innerText = msg;
+
+            fb.className = 'text-sm md:text-base font-medium min-h-[24px] text-center sm:text-left transition-colors ';
+            if (type === 'success') {
+                fb.classList.add('text-emerald-400');
+            } else if (type === 'error') {
+                fb.classList.add('text-rose-400');
+            } else if (type === 'warning') {
+                fb.classList.add('text-amber-400');
+            } else {
+                fb.classList.add('text-slate-300');
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
